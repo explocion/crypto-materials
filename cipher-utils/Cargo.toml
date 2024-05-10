@@ -1,0 +1,29 @@
+[package]
+name = "cipher-utils"
+version = "0.1.0"
+authors = ["Binhao Qin"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+base64 = "0.22.1"
+bytes = "1.6.0"
+clap = { version = "4.5.4", features = ["derive"] }
+cipher = { version = "0.4.4", features = [
+  "block-padding",
+  "rand_core",
+  "std",
+  "dev",
+  "zeroize",
+] }
+once_cell = "1.19.0"
+regex = { version = "1.10.4", features = ["use_std"] }
+rand = "0.8.5"
+
+[features]
+default = ["dev"]
+dev = []
+
+[[example]]
+name = "caesar"

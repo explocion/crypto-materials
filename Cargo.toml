@@ -1,0 +1,8 @@
+[workspace]
+resolver = "2"
+members = ["cipher-utils", "gcd"]
+
+[profile.release]
+panic = "abort"
+strip = true
+lto = true
