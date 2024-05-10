@@ -13,4 +13,5 @@ RUN zsh <(curl -s https://raw.githubusercontent.com/zap-zsh/zap/master/install.z
 RUN rustup default stable && rustup component add rust-analyzer
 RUN mkdir /home/debian/crypto
 
+WORKDIR /home/debian
 CMD ["zsh"]

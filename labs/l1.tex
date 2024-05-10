@@ -12,10 +12,9 @@
 \blockinfo{
 	\quad Goals:
 	\begin{itemize}
-		\item Install GNU Multi-Precision (GMP) arithmetic library
 		\item Get familiar with programming in Rust
 		\item Get familiar with Rust build system, \texttt{cargo}
-		\item Implement extended Euclidean algorithm
+		\item Implement extended Euclidean algorithm using GNU Multi-Precision (GMP) arithmetic library
 	\end{itemize}
 }
 
@@ -28,7 +27,14 @@
 \end{enumerate}
 \section{Extended Euclidean Algorithm}
 \begin{enumerate}
-	\item Install the GNU Multi Precision Arithmetic Library (GMP) from \href{https://gmplib.org/}{https://gmplib.org/} or its fork MPIR available at \href{https://mpir.org/}{https://mpir.org/}. Note that MPIR has a better support for Windows, although no binaries are officially provided. GMP is available on any modern Linux distribution.
+	\item Get an environment with GMP installed:
+	\begin{itemize}
+		\item Install the GNU Multi Precision Arithmetic Library (GMP) from \href{https://gmplib.org/}{https://gmplib.org/} or its fork MPIR available at \href{https://mpir.org/}{https://mpir.org/}. Note that MPIR has a better support for Windows, although no binaries are officially provided. GMP is available on any modern Linux distribution.
+		\item Or, use the \texttt{Dockerfile} provided. It has all of the software needed for this course.
+	\end{itemize}
+	\item Create a new Rust package of type library, implement the extended Euclidean algorithm. (Hint: Check out \texttt{rug}, a Rust package for calling GMP functions)
+	\item Write a test that generates 2 random integer, and compares the result of the extended Euclidean algorithm you just implemented to the result of the library function.
+	\item Run \texttt{cargo test} to demonstrate that your implementation passes the test.
 \end{enumerate}
 
 \end{document}
