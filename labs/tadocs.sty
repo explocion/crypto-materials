@@ -1,0 +1,164 @@
+\NeedsTeXFormat{LaTeX2e}[1994/06/01]
+\ProvidesPackage{tadocs}[2021/09/16 TA documents]
+
+% compiler 
+\RequirePackage{ifxetex,ifluatex}
+\newif\ifxetexorluatex
+\ifxetex
+  \xetexorluatextrue
+\else
+  \ifluatex
+    \xetexorluatextrue
+  \else
+    \xetexorluatexfalse
+  \fi
+\fi
+
+
+% package options 
+\RequirePackage{xkeyval}
+
+\define@boolkey{tadocs.sty}[tadocs@]{cs}[true]{}
+\define@boolkey{tadocs.sty}[tadocs@]{math}[true]{}
+
+\ProcessOptionsX\relax
+
+% geometry and spacing
+\RequirePackage[margin=2cm,top=1.75cm]{geometry}
+\RequirePackage{setspace}
+\onehalfspacing
+\setlength\parindent{0pt}
+\setlength\parskip{.125cm}
+
+% fonts and links
+\ifxetexorluatex
+	\RequirePackage{cmbright}
+	\RequirePackage{fontspec}
+	\setmonofont[Scale=.9]{CMU Typewriter Text}
+	\setsansfont{cmunb}[        %CMU Bright for text
+	Extension=.otf,
+	UprightFont=*mr,
+	ItalicFont=*mo,
+	BoldFont=*bx, % semibold
+	BoldItalicFont=*so, % semibold oblique
+	NFSSFamily=cmbr
+	]
+	\setmainfont{CMU Bright}
+\else
+	\RequirePackage{cmbright}
+	\RequirePackage[cm]{sfmath}
+\fi
+
+\RequirePackage[colorlinks=true, breaklinks=true, linkcolor=black!70, urlcolor=black!70, citecolor=black!80]{hyperref}
+
+% misc
+\RequirePackage{booktabs,multirow,varwidth}
+\RequirePackage{enumitem} 
+\setlist{itemsep=0cm,topsep=0cm}
+\RequirePackage{multicol}
+\setlength\multicolsep{.125cm}
+
+% boxes
+\RequirePackage{tcolorbox}
+\tcbuselibrary{breakable,skins,raster}
+
+% information
+\newcommand*{\subtitle}[1]{\gdef\@subtitle{#1}}
+\newcommand*{\@subtitle}{Subtitle}
+\newcommand*{\semester}[1]{\gdef\@semester{#1}\def\thesemester{\@semester}}
+\newcommand*{\@semester}{}
+\renewcommand*{\year}[1]{\gdef\@year{#1}}
+\newcommand*{\@year}{}
+\newcommand*{\institute}[1]{\gdef\@institute{#1}}
+\newcommand*{\@institute}{UM-JI}
+\newcommand{\blockinfo}[1]{\gdef\@blockinfo{#1}}
+\newcommand{\@blockinfo}{\hspace{.5cm}General information}
+\newcommand*{\instructor}[1]{\gdef\@instructor{#1}}
+\newcommand*{\@instructor}{\href{mailto:charlem@sjtu.edu.cn}{Manuel}}
+\newcommand{\noinstructor}{\renewcommand*{\@instructor}{}}
+\date{}
+
+% maketitle
+\renewcommand{\maketitle}{
+	\begin{tcbraster}[raster columns=2, raster equal height,raster column skip=.5cm]
+		\begin{tcolorbox}[colback=black!4!white,colframe=white!50!black]
+{\Large	{\bf \@title} \ifx\@instructor\empty\vspace{.75cm}\else\vspace{.15cm}\fi
+
+{ \it \@subtitle \quad \ifx\@date\@empty\else(\@date)\fi}}\\
+	\ifx\@instructor\empty\else Instructor:~\@instructor\\\fi 
+\@author\ ---\ \@institute\ \ifx\@semester\@empty\else(\@semester\ \@year)\fi
+		\end{tcolorbox}
+		\begin{tcolorbox}[blanker,interior hidden,boxsep=0pt,frame hidden,arc=0pt,boxrule=0pt,left=0pt,before skip=0t, after skip=6pt,left=3pt,borderline west={3mm}{0pt}{black!65!white}]
+			\@blockinfo
+		\end{tcolorbox}
+	\end{tcbraster}
+
+	\par\bigskip
+}
+
+\iftadocs@math
+\RequirePackage{amsmath,amsfonts,amssymb,commath}
+\fi 
+
+\iftadocs@cs
+
+\PassOptionsToPackage{cache=true,cachedir=minted_\jobname,outputdir=.lmk}{minted}
+
+% CS boxes 
+\tcbuselibrary{listingsutf8,minted,xparse}
+\tcbset{
+  cs/.style={
+    listing engine=minted,
+    fonttitle=\small,
+    fontlower=\small,
+    enhanced,left=1mm,top=.1cm, right=.1cm, bottom=.1cm,
+		minted style=xcode,
+    minted options={fontsize=#1,linenos,numbersep=3mm,tabsize=2},
+     colback=blue!5,colframe=blue!68!black,coltext=black,
+listing only,  left=6mm,top=.1cm, right=.1cm, bottom=.1cm,
+  },
+}
+
+% line numbers
+\renewcommand{\theFancyVerbLine}{\sffamily\scriptsize\oldstylenums{\arabic{FancyVerbLine}}}
+
+\DeclareTCBInputListing{csfbox}{s O{\small} m m m O{} }{
+  \IfBooleanTF#1{breakable}{},
+    enhanced jigsaw, cs=#2,
+		title=#3,listing file={#4},minted language=#5,overlay={
+    \begin{tcbclipinterior}\fill[blue!15] (frame.south west) rectangle ([xshift=5mm]frame.north west);\end{tcbclipinterior},
+  },#6
+}
+
+% auto detect current file type based on its extension
+% need % at end of line to prevent raster to fail
+\newcommand{\filetype}[1]{%
+\IfSubStr{#1}{Makefile}{\def\ftype{make}}{%
+\IfEndWith{#1}{.cpp}{\def\ftype{c++}}{%
+\IfEndWith{#1}{.h}{\def\ftype{c++}}{%
+\IfEndWith{#1}{.c}{\def\ftype{c}}{%
+\IfEndWith{#1}{.m}{\def\ftype{matlab}}{%
+\IfEndWith{#1}{.py}{\def\ftype{python}}{%
+\IfEndWith{#1}{.sty}{\def\ftype{latex}}{%
+\IfEndWith{#1}{.tex}{\def\ftype{latex}}{%
+\IfEndWith{#1}{.elm}{\def\ftype{elm}}{%
+\def\ftype{R}%
+}}}}}}}}}}
+
+% * version is breakable -> incompatible with rasterbox
+\NewDocumentCommand{\codefbox}{ s O{\small} m O{} }{%
+  \filetype{#3}\def\file{#3}%
+  \IfBooleanTF#1%
+	{\csfbox*[#2]{\StrSubstitute{\file}{_}{\_}}{#3}{\ftype}[#4]}%
+	{\csfbox[#2]{\StrSubstitute{\file}{_}{\_}}{#3}{\ftype}[#4]}%
+}
+
+% inline code
+\DeclareTCBListing{codetbox}{ O{\small} m O{} }{
+	cs=#1,minted language=#2,overlay={
+		\begin{tcbclipinterior}\fill[blue!15] (frame.south west)rectangle ([xshift=5mm]frame.north west);\end{tcbclipinterior}
+	},#3
+}
+
+\fi
+\endinput
