@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["cipher-utils", "gcd", "warmup"]
+members = ["cipher-utils", "gcd", "warmup", "warmup_sol"]
 
 [profile.release]
 panic = "abort"
