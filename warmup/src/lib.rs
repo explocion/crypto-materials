@@ -60,7 +60,9 @@ pub struct Tree {
 
 impl Tree {
     pub fn sum(&self) -> i32 {
-        todo!("Traverse and return the sum of the tree")
+        self.value
+            + self.left.as_ref().map(|tree| tree.value).unwrap_or(0)
+            + self.right.as_ref().map(|tree| tree.value).unwrap_or(0)
     }
 
     pub fn get_value_if_inner(&self) -> Option<i32> {
