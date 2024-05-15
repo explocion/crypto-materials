@@ -66,7 +66,7 @@ impl Tree {
     }
 
     pub fn sum_if_full(&self) -> Option<i32> {
-        todo!("Return the sum of the tree iff the tree is full, None otherwise")
+        Some(self.value + self.left.as_ref()?.sum_if_full()? + self.right.as_ref()?.sum_if_full()?)
     }
 }
 
