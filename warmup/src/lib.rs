@@ -14,7 +14,7 @@ mod fibonacci_tests {
     }
 }
 
-pub fn longest_str<'a, 'b>(strings: &'b [&'a str]) -> &'a str {
+pub fn longest_str<'a, 'b>(texts: &'b [&'a str]) -> &'a str {
     todo!(
         "Return the longest string slice of those passed in, if nothing is passed in, you should panic!()
         If there are multiple strings of the same length are all longest, return the first one"
@@ -42,10 +42,14 @@ impl Tree {
     pub fn sum(&self) -> i32 {
         todo!("Traverse and return the sum of the tree")
     }
+
+    pub fn get_value_if_inner(&self) -> Option<i32> {
+        todo!("Return the value of self iff it has 2 children, None otherwise")
+    }
 }
 
 #[cfg(test)]
-mod tree_sum_tests {
+mod tree_tests {
     use super::Tree;
 
     #[test]
@@ -68,5 +72,27 @@ mod tree_sum_tests {
             })),
         };
         assert_eq!(tree.sum(), 25);
+    }
+
+    #[test]
+    fn test_get_inner_value() {
+        let tree = Tree {
+            value: 7,
+            left: Some(Box::new(Tree {
+                value: 5,
+                left: None,
+                right: Some(Box::new(Tree {
+                    value: 10,
+                    left: None,
+                    right: None,
+                })),
+            })),
+            right: Some(Box::new(Tree {
+                value: 3,
+                left: None,
+                right: None,
+            })),
+        };
+        assert_eq!(tree.left.unwrap().get_value_if_inner(), None);
     }
 }
