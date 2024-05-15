@@ -61,8 +61,8 @@ pub struct Tree {
 impl Tree {
     pub fn sum(&self) -> i32 {
         self.value
-            + self.left.as_ref().map(|tree| tree.value).unwrap_or(0)
-            + self.right.as_ref().map(|tree| tree.value).unwrap_or(0)
+            + self.left.as_ref().map(|tree| tree.sum()).unwrap_or(0)
+            + self.right.as_ref().map(|tree| tree.sum()).unwrap_or(0)
     }
 
     pub fn sum_if_full(&self) -> Option<i32> {
