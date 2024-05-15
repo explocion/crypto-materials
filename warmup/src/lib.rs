@@ -1,5 +1,13 @@
 pub fn fibonacci(n: u32) -> u32 {
-    todo!("Implement a function that returns the n-th fibonacci number, starting with 0, 1")
+    match n {
+        0 => 0,
+        1 => 1,
+        _ => {
+            (2..=n)
+                .fold((1, 0), |(last, previous), _| (last + previous, last))
+                .0
+        }
+    }
 }
 
 #[cfg(test)]
@@ -14,11 +22,23 @@ mod fibonacci_tests {
     }
 }
 
-pub fn longest_str<'a, 'b>(strings: &'b [&'a str]) -> &'a str {
-    todo!(
-        "Return the longest string slice of those passed in, if nothing is passed in, you should panic!()
-        If there are multiple strings of the same length are all longest, return the first one"
-    )
+pub fn longest_str<'a, 'b>(texts: &'b [&'a str]) -> &'a str {
+    texts
+        .iter()
+        .fold(None, |longest: Option<&'a str>, text| {
+            Some(
+                longest
+                    .map(|longest| {
+                        if text.len() > longest.len() {
+                            text
+                        } else {
+                            longest
+                        }
+                    })
+                    .unwrap_or(text),
+            )
+        })
+        .unwrap()
 }
 
 #[cfg(test)]
