@@ -65,8 +65,8 @@ impl Tree {
             + self.right.as_ref().map(|tree| tree.value).unwrap_or(0)
     }
 
-    pub fn get_value_if_inner(&self) -> Option<i32> {
-        todo!("Return the value of self iff it has 2 children, None otherwise")
+    pub fn sum_if_full(&self) -> Option<i32> {
+        todo!("Return the sum of the tree iff the tree is full, None otherwise")
     }
 }
 
@@ -97,7 +97,7 @@ mod tree_tests {
     }
 
     #[test]
-    fn test_get_inner_value() {
+    fn test_sum_if_full() {
         let tree = Tree {
             value: 7,
             left: Some(Box::new(Tree {
@@ -115,6 +115,6 @@ mod tree_tests {
                 right: None,
             })),
         };
-        assert_eq!(tree.left.unwrap().get_value_if_inner(), None);
+        assert_eq!(tree.sum_if_full(), None);
     }
 }
