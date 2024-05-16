@@ -5,31 +5,30 @@ use clap::{Parser, Subcommand};
 use regex::Regex;
 use std::{error::Error, fmt, path::PathBuf};
 
-#[derive(Debug, Default)]
-pub struct IllegalCharacter;
-
-impl IllegalCharacter {
-    pub fn new() -> Self {
-        Self::default()
-    }
-}
+#[derive(Debug)]
+pub struct IllegalCharacter(pub char);
 
 impl fmt::Display for IllegalCharacter {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "illegal character")
+        write!(f, "illegal character \'{}\'", self.0)
     }
 }
 
 impl Error for IllegalCharacter {}
 
-pub fn parse_message(message: &str) -> Result<Bytes, IllegalCharacter> {
+pub fn verified_message(message: &str) -> Result<&str, IllegalCharacter> {
     use once_cell::sync::Lazy;
-    static RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"^[0-9a-zA-Z\,\.\;\?\!\(\)]+$").unwrap());
+    static ILLEGAL_CHARACTER: Lazy<Regex> =
+        Lazy::new(|| Regex::new(r"[^[[:alnum:]]\,\.\;\?\!\(\)]").unwrap());
 
-    RE.is_match(message)
-        .then_some(message)
-        .map(|message| message.as_bytes().to_vec().into())
-        .ok_or(IllegalCharacter::new())
+    match ILLEGAL_CHARACTER.find(message) {
+        Some(m) => Err(IllegalCharacter(m.as_str().chars().next().unwrap())),
+        None => Ok(message),
+    }
+}
+
+pub fn parse_message(message: &str) -> Result<Bytes, IllegalCharacter> {
+    verified_message(message).map(|message| message.bytes().collect())
 }
 
 pub fn parse_base64(value: &str) -> Result<Bytes, base64::DecodeError> {
